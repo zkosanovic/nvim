@@ -19,3 +19,13 @@ local function open_nvim_tree(data)
 end
 
 autocmd({ "VimEnter" }, { callback = open_nvim_tree })
+
+autocmd("FileType", {
+  pattern = "typescript",
+  callback = function()
+    vim.bo.tabstop = 4
+    vim.bo.shiftwidth = 4
+    vim.bo.softtabstop = 4
+    vim.bo.expandtab = true
+  end,
+})

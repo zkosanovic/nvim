@@ -29,3 +29,17 @@ autocmd("FileType", {
     vim.bo.expandtab = true
   end,
 })
+
+-- Leave snippet when changing mode, so it doesn't hijack the TAB key after
+-- https://github.com/L3MON4D3/LuaSnip/issues/258#issuecomment-1011938524
+local function leave_snippet()
+  if
+    ((vim.v.event.old_mode == "s" and vim.v.event.new_mode == "n") or vim.v.event.old_mode == "i")
+    and require("luasnip").session.current_nodes[vim.api.nvim_get_current_buf()]
+    and not require("luasnip").session.jump_active
+  then
+    require("luasnip").unlink_current()
+  end
+end
+
+autocmd("ModeChanged", { callback = leave_snippet })

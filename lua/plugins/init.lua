@@ -33,7 +33,7 @@ return {
         "goimports-reviser",
         "golangci-lint-langserver",
         -- Rust
-        "codelldb",
+        "rust-analyzer",
       },
     },
   },
@@ -47,6 +47,7 @@ return {
         "vimdoc",
         "html",
         "css",
+        "svelte",
       },
     },
   },

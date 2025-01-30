@@ -22,3 +22,7 @@ map("n", "<leader>cq", function()
     vim.lsp.stop_client(id)
   end
 end, { desc = "kill copilot lsp" })
+
+-- ufo
+map("n", "zR", require("ufo").openAllFolds, { desc = "Open all folds" })
+map("n", "zM", require("ufo").closeAllFolds, { desc = "Close all folds" })

@@ -8,6 +8,12 @@ map({ "n", "v" }, "d", '"_d', { desc = "Delete without yanking" })
 
 map("i", "jk", "<ESC>")
 
--- ufo
-map("n", "zR", require("ufo").openAllFolds, { desc = "Open all folds" })
-map("n", "zM", require("ufo").closeAllFolds, { desc = "Close all folds" })
+-- Go struct filling
+map("n", "<leader>gf", function()
+  vim.lsp.buf.code_action {
+    filter = function(action)
+      return action.kind == "refactor.rewrite.fillStruct" and string.match(action.title, "Fill")
+    end,
+    apply = true,
+  }
+end, { desc = "Go fill struct" })

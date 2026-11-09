@@ -2,6 +2,7 @@ return {
   {
     "stevearc/conform.nvim",
     event = "BufWritePre",
+    cmd = "ConformInfo",
     opts = require "configs.conform",
   },
 
@@ -30,8 +31,7 @@ return {
         "svelte-language-server",
         -- Go
         "gopls",
-        "goimports-reviser",
-        "golangci-lint-langserver",
+        "golangci-lint-langserver", -- also needs `golangci-lint` on PATH (Homebrew)
         -- Rust
         "rust-analyzer",
       },
@@ -40,14 +40,27 @@ return {
 
   {
     "nvim-treesitter/nvim-treesitter",
+    branch = "main", -- NvChad v2.5 uses the `main` API (master is archived)
     opts = {
       ensure_installed = {
         "vim",
         "lua",
+        "luadoc",
+        "printf",
         "vimdoc",
+        "markdown",
+        "markdown_inline",
         "html",
         "css",
         "svelte",
+        "javascript",
+        "typescript",
+        "tsx",
+        "json",
+        "go",
+        "gomod",
+        "gosum",
+        "rust",
       },
     },
   },
@@ -62,6 +75,11 @@ return {
 
   {
     "kevinhwang91/nvim-ufo",
+    event = "BufReadPost",
+    keys = {
+      { "zR", function() require("ufo").openAllFolds() end, desc = "Open all folds" },
+      { "zM", function() require("ufo").closeAllFolds() end, desc = "Close all folds" },
+    },
     dependencies = {
       "kevinhwang91/promise-async",
       {
@@ -99,5 +117,16 @@ return {
         { name = "path" },
       },
     },
+  },
+
+  {
+    "kylechui/nvim-surround",
+    version = "*", -- Use for stability; omit to use `main` branch for the latest features
+    event = "VeryLazy",
+    config = function()
+      require("nvim-surround").setup {
+        -- Configuration here, or leave empty to use defaults
+      }
+    end,
   },
 }

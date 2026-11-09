@@ -1,39 +1,33 @@
--- load defaults i.e lua_lsp
+-- NvChad defaults: diagnostics, LSP keymaps (via LspAttach), shared
+-- capabilities for every server (vim.lsp.config "*"), and lua_ls
 require("nvchad.configs.lspconfig").defaults()
 
-local lspconfig = require "lspconfig"
+-- Tell the Svelte server when JS/TS files change so cross-file types stay fresh
+local svelte_group = vim.api.nvim_create_augroup("SvelteTsJsChanges", { clear = true })
 
-local servers =
-  { "html", "cssls", "jsonls", "tailwindcss", "eslint", "ts_ls", "rust_analyzer", "gopls", "goimports-reviser" }
-local nvlsp = require "nvchad.configs.lspconfig"
-
--- lsps with default config
-for _, lsp in ipairs(servers) do
-  lspconfig[lsp].setup {
-    on_attach = nvlsp.on_attach,
-    on_init = nvlsp.on_init,
-    capabilities = nvlsp.capabilities,
-  }
-end
-
-lspconfig.svelte.setup {
+vim.lsp.config("svelte", {
   filetypes = { "svelte" },
-  on_attach = function(client, bufnr)
-    if client.name == "svelte" then
-      vim.api.nvim_create_autocmd("BufWritePost", {
-        pattern = { "*.js", "*.ts", "*.svelte" },
-        callback = function(ctx)
-          client.notify("$/onDidChangeTsOrJsFile", { uri = ctx.file })
-        end,
-      })
-    end
-    if vim.bo[bufnr].filetype == "svelte" then
-      vim.api.nvim_create_autocmd("BufWritePost", {
-        pattern = { "*.js", "*.ts", "*.svelte" },
-        callback = function(ctx)
-          client.notify("$/onDidChangeTsOrJsFile", { uri = ctx.file })
-        end,
-      })
-    end
+  on_attach = function(client)
+    vim.api.nvim_clear_autocmds { group = svelte_group }
+    vim.api.nvim_create_autocmd("BufWritePost", {
+      group = svelte_group,
+      pattern = { "*.js", "*.ts" },
+      callback = function(ctx)
+        client:notify("$/onDidChangeTsOrJsFile", { uri = vim.uri_from_fname(ctx.match) })
+      end,
+    })
   end,
+})
+
+vim.lsp.enable {
+  "html",
+  "cssls",
+  "jsonls",
+  "tailwindcss",
+  "eslint",
+  "ts_ls",
+  "svelte",
+  "rust_analyzer",
+  "gopls",
+  "golangci_lint_ls",
 }
